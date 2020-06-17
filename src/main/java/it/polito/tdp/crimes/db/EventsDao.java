@@ -16,12 +16,19 @@ import it.polito.tdp.crimes.model.Event;
 
 public class EventsDao {
 	
-	public List<Event> listAllEvents(){
-		String sql = "SELECT * FROM events" ;
+	public List<Event> listAllEventsByDate(Integer anno, Integer mese, Integer giorno){
+		String sql = "select * " + 
+				"from events " + 
+				"where YEAR(reported_date)=? " + 
+				"and MONTH(reported_date)=? " + 
+				"and DAY(reported_date)=?" ;
 		try {
 			Connection conn = DBConnect.getConnection() ;
 
 			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			st.setInt(2, mese);
+			st.setInt(3, giorno);
 			
 			List<Event> list = new ArrayList<>() ;
 			
@@ -153,6 +160,37 @@ public class EventsDao {
 			e.printStackTrace();
 			return null ;
 		}
+	}
+
+	public Integer getDistrettoMin(Integer anno) {
+		String sql = "Select district_id, COUNT(*) as nCrimini " + 
+				"from events " + 
+				"where YEAR(reported_date)=? " + 
+				"group by district_id " + 
+				"order by COUNT(*) asc " + 
+				"limit 1";
+		
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, anno);
+			ResultSet res = st.executeQuery() ;
+			
+			if (res.next()) {
+				Integer result = res.getInt("district_id");
+				conn.close();
+				return result;
+			} else {
+				conn.close();
+				return null;
+			}
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null ;
+		}
+		
 	}
 	
 	

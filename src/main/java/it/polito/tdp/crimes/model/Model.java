@@ -114,5 +114,12 @@ public class Model {
 		
 	}
 	
+	public int simula(Integer anno,Integer mese,Integer giorno, Integer N) {
+		Simulator sim = new Simulator();
+		sim.init(N, anno, mese, giorno, grafo);
+		
+		return sim.run();
+	}
+	
 
 }

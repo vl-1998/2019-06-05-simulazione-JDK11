@@ -5,6 +5,7 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -78,6 +79,33 @@ public class FXMLController {
 
     @FXML
     void doSimula(ActionEvent event) {
+    	txtResult.clear();
+    	String enne = txtN.getText();
+    	try {
+    		int N = Integer.parseInt(enne);
+    		Integer anno = boxAnno.getValue();
+    		Integer mese = boxMese.getValue();
+    		Integer giorno = boxGiorno.getValue();
+    		
+    		if (anno == null || mese == null || giorno == null) {
+    			txtResult.appendText("Selezionare tutti i campi!");
+    			return;
+    		}
+    		
+    		try {
+    			LocalDate.of(anno, mese, giorno);
+    		} catch(DateTimeException e) {
+    			txtResult.appendText("Data non corretta");
+    		}
+    		
+    		txtResult.appendText("Simula con "+N+ " agenti.");
+    		txtResult.appendText("\nCrimini mal gestiti: "+this.model.simula(anno, mese, giorno, N));
+    		
+    		
+    	} catch (IllegalArgumentException e) {
+    		txtResult.appendText("Inserire valore valido!");
+    		return;
+    	}
 
     }
 
