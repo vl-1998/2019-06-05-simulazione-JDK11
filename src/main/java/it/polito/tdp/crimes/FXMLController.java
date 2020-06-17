@@ -5,9 +5,12 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
+import it.polito.tdp.crimes.model.Vicini;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,13 +28,13 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -47,6 +50,29 @@ public class FXMLController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
+    	txtResult.clear();
+    	
+    	try {
+    		Integer anno = boxAnno.getValue();
+    		
+    		this.model.creaGrafo(anno);
+    		txtResult.appendText("Grafo creato! #vertici: "+this.model.vertexNumber()+" #archi: "+this.model.edgeNumber()+"\n");
+    		
+    		
+    		
+    		for (Integer i: this.model.getVertici()) {
+    			List <Vicini> vicini = this.model.adiacenti(i);
+    			txtResult.appendText("\n\nVICINI DEL DISTRETTO: "+i + "\n");
+    			for (Vicini v: vicini) {
+    				txtResult.appendText(v.getD1() +" -> "+ v.getD2()+ ". Distanza: "+v.getPeso()+"\n");
+    			}
+    		}
+    		
+    		
+    	} catch (IllegalArgumentException e) {
+    		txtResult.appendText("Scegliere un anno!");
+    		return;
+    	}
 
     }
 
@@ -69,5 +95,8 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.boxAnno.getItems().setAll(this.model.getAnno());
+    	this.boxMese.getItems().setAll(this.model.getMese());
+    	this.boxGiorno.getItems().setAll(this.model.getDay());
     }
 }
